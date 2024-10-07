@@ -1,9 +1,33 @@
-import React from 'react'; 
+import React, { useState } from 'react';
 import Chocolate from '../Assets/chocolate.png';
-import { Box, FormControl, FormHelperText, InputLabel, Typography, OutlinedInput, Button } from '@mui/material';
+import { Box, FormControl, FormHelperText, InputLabel, Typography, OutlinedInput, Button, IconButton, InputAdornment } from '@mui/material';
 import { Link } from 'react-router-dom';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 const LoginPage = () => {
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [errors, setErrors] = useState({ email: false, password: false });
+  const [showPassword, setShowPassword] = useState(false);
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+
+  const handleInputChange = (e) => {
+    const { id, value } = e.target;
+    setFormData({ ...formData, [id]: value });
+    setErrors({ ...errors, [id]: false }); 
+  };
+
+  const handleLogin = () => {
+    const newErrors = {
+      email: !formData.email,
+      password: !formData.password,
+    };
+    setErrors(newErrors);
+
+    if (!newErrors.email && !newErrors.password) {
+    }
+  };
+
   return (
     <Box 
       sx={{
@@ -13,7 +37,6 @@ const LoginPage = () => {
         justifyContent: 'center',
         width: { xs: '105%', sm: '90%', md: '70%', lg: '50%', xl: '450px' },
         margin: 'auto',
-        // padding: { xs: '16px', sm: '24px' },
         boxShadow: 3,
         borderRadius: 2,
         bgcolor: 'background.paper',
@@ -26,7 +49,7 @@ const LoginPage = () => {
         alt="Chocolate"
         sx={{
           width: '100%',
-          height: { xs: '180px', sm: '200px', md: 'auto' }, // Adjust height for smaller screens
+          height: { xs: '180px', sm: '200px', md: 'auto' },
           borderTopLeftRadius: 8,
           borderTopRightRadius: 8,
           display: 'block',
@@ -40,38 +63,57 @@ const LoginPage = () => {
           justifyContent: 'center',
           width: '100%',
           padding: { xs: '0 12px', sm: '0 16px' },
-          marginTop: '-100px', // Reduce the overlap on smaller screens
+          marginTop: '-100px',
         }}
       >
-        <Typography variant="h3" sx={{color: '#5B3E2D', fontSize: { xs: '18px', sm: '20px', md: '24px' }, fontFamily: 'Merienda', textAlign: 'center', marginBottom: 0.5 }}>
+        <Typography variant="h3" sx={{ color: '#5B3E2D', fontSize: { xs: '18px', sm: '20px', md: '24px' }, fontFamily: 'Merienda', textAlign: 'center', marginBottom: 0.5 }}>
           Hi there,
         </Typography>
-        <Typography variant="h1" sx={{color: '#5B3E2D',fontWeight: 'bold', fontSize: { xs: '26px', sm: '30px', md: '36px' }, fontFamily: 'Merienda', textAlign: 'center', marginBottom: 1 }}>
+        <Typography variant="h1" sx={{ color: '#5B3E2D', fontWeight: 'bold', fontSize: { xs: '26px', sm: '30px', md: '36px' }, fontFamily: 'Merienda', textAlign: 'center', marginBottom: 1 }}>
           Welcome Back
         </Typography>
 
         <Box sx={{ padding: { xs: 2, sm: 3 } }}>
-          <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }} error={errors.email}>
             <InputLabel htmlFor="email">Email</InputLabel>
-            <OutlinedInput id="email" label="Email" />
-            <FormHelperText>Enter Your Email Address</FormHelperText>
+            <OutlinedInput 
+              id="email" 
+              label="Email" 
+              value={formData.email} 
+              onChange={handleInputChange} 
+            />
+            <FormHelperText>{errors.email ? 'Email is required' : 'Enter Your Email Address'}</FormHelperText>
           </FormControl>
 
-          <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }}>
+          <FormControl fullWidth variant="outlined" sx={{ marginBottom: 2 }} error={errors.password}>
             <InputLabel htmlFor="password">Password</InputLabel>
-            <OutlinedInput id="password" type="password" label="Password" />
-            <FormHelperText>Enter Your Password</FormHelperText>
+            <OutlinedInput 
+              id="password" 
+              type={showPassword ? 'text' : 'password'} 
+              label="Password" 
+              value={formData.password}
+              onChange={handleInputChange}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton onClick={togglePasswordVisibility} edge="end">
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+            <FormHelperText>{errors.password ? 'Password is required' : 'Enter Your Password'}</FormHelperText>
           </FormControl>
 
           <Button 
             variant="contained" 
             sx={{ marginTop: 3, width: '100%', backgroundColor: '#8B4513', color: 'white', padding: '10px 0', '&:hover': { backgroundColor: '#5B3E2D' } }}
+            onClick={handleLogin}
           >
             Login
           </Button>
           <Typography variant='body1' sx={{ marginTop: 2, color: '#5B3E2D' }}>
             Create an account? 
-            <Link to="/signin" style={{ color: '#5B3E2D', textDecoration: 'none',fontFamily: 'Merienda', fontWeight: 'bold' }}>SignIn</Link>
+            <Link to="/signin" style={{ color: '#5B3E2D', textDecoration: 'none', fontFamily: 'Merienda', fontWeight: 'bold' }}>SignIn</Link>
           </Typography>
         </Box>
       </Box>
